@@ -1,0 +1,390 @@
+<title>Python Setup for PGE 5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #F7F8F9;
+  --surface: #FFFFFF;
+  --ink: #2E4057;
+  --ink-soft: #5B6878;
+  --line: #DDE2E8;
+  --accent: #E85D04;
+  --teal: #047A72;
+  --code-bg: #EEF1F4;
+  --warn-bg: #FFF4EA;
+  --ok-bg: #E8F5F3;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #151B23; --surface: #1D2530; --ink: #E4E9EF; --ink-soft: #A3AFBD;
+    --line: #2F3A47; --accent: #FF8A3D; --teal: #3CC4B7; --code-bg: #232D3A;
+    --warn-bg: #2E2319; --ok-bg: #16302D;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #151B23; --surface: #1D2530; --ink: #E4E9EF; --ink-soft: #A3AFBD;
+  --line: #2F3A47; --accent: #FF8A3D; --teal: #3CC4B7; --code-bg: #232D3A;
+  --warn-bg: #2E2319; --ok-bg: #16302D;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 17px/1.6 var(--body);
+  padding-inline: 16px; padding-block: 0 64px;
+}
+.wrap { max-width: 740px; margin: 0 auto; }
+header { padding-block: 48px 28px; border-bottom: 1px solid var(--line); }
+.eyebrow { font: 600 13px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--teal); }
+h1 { font: 800 clamp(34px, 6vw, 48px)/1.05 var(--display); margin: 12px 0 14px; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font: 600 26px/1.2 var(--display); margin: 0 0 6px; text-wrap: balance; }
+h3 { font: 600 18px/1.3 var(--body); margin: 0 0 4px; }
+p { margin: 0 0 12px; max-width: 65ch; }
+.lede { font-size: 19px; color: var(--ink-soft); }
+a { color: var(--teal); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, summary:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code, kbd { font: .88em var(--mono); background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; }
+
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 22px; }
+.summary div { border-left: 3px solid var(--accent); padding: 2px 0 2px 12px; }
+.summary b { display: block; font: 600 15px/1.3 var(--body); }
+.summary span { font-size: 15px; color: var(--ink-soft); }
+
+.os-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); padding-block: 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.os-bar .label { font-size: 15px; color: var(--ink-soft); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; background: var(--surface); }
+.seg button { font: 600 15px/1 var(--body); color: var(--ink-soft); background: none; border: 0; padding: 9px 18px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+section { padding-block: 40px 8px; }
+.section-intro { color: var(--ink-soft); margin-bottom: 22px; }
+
+ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: step; display: grid; gap: 22px; }
+ol.steps > li { counter-increment: step; display: grid; grid-template-columns: 40px 1fr; gap: 14px; }
+ol.steps > li::before {
+  content: counter(step); font: 800 18px/40px var(--display); text-align: center;
+  width: 40px; height: 40px; border-radius: 50%; background: var(--surface); border: 2px solid var(--accent); color: var(--accent);
+}
+.step-body > p:last-child { margin-bottom: 0; }
+.step-body ul { margin: 6px 0 10px; padding-left: 20px; }
+.step-body li { margin-bottom: 4px; }
+
+.code { position: relative; margin: 10px 0 12px; }
+.code pre { margin: 0; background: var(--code-bg); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font: 14px/1.55 var(--mono); }
+.code pre code { background: none; padding: 0; font-size: inherit; }
+.copy { position: absolute; top: 8px; right: 8px; font: 600 12px/1 var(--body); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft); cursor: pointer; }
+.copy:hover { color: var(--ink); }
+.out { margin: -4px 0 12px; font: 13.5px/1.55 var(--mono); color: var(--ink-soft); border-left: 3px solid var(--teal); padding: 6px 0 6px 14px; white-space: pre; overflow-x: auto; }
+
+.note { background: var(--warn-bg); border-radius: 8px; padding: 12px 16px; margin: 10px 0 12px; font-size: 16px; }
+.note b { color: var(--accent); }
+.good { background: var(--ok-bg); }
+.good b { color: var(--teal); }
+
+.folder { font: 14px/1.7 var(--mono); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; margin: 10px 0 12px; white-space: pre; overflow-x: auto; }
+
+details { border-top: 1px solid var(--line); padding-block: 14px; }
+details:last-of-type { border-bottom: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 600; list-style: none; display: flex; gap: 10px; align-items: baseline; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "+"; font: 600 18px/1 var(--mono); color: var(--accent); width: 14px; flex: none; }
+details[open] summary::before { content: "−"; }
+details > div { padding: 10px 0 0 24px; }
+
+.check { display: grid; gap: 10px; margin-top: 8px; }
+.check label { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; cursor: pointer; }
+.check input { width: 18px; height: 18px; margin-top: 4px; accent-color: var(--teal); flex: none; }
+.check label:has(input:checked) { border-color: var(--teal); }
+.check label:has(input:checked) span { color: var(--ink-soft); text-decoration: line-through; }
+.progress { font-size: 15px; color: var(--ink-soft); margin-top: 10px; font-variant-numeric: tabular-nums; }
+
+footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15px; color: var(--ink-soft); }
+
+[data-os] { display: none; }
+body.os-mac [data-os="mac"], body.os-win [data-os="win"] { display: revert; }
+
+@media (max-width: 560px) {
+  .summary { grid-template-columns: 1fr; }
+  ol.steps > li { grid-template-columns: 32px 1fr; gap: 10px; }
+  ol.steps > li::before { width: 32px; height: 32px; line-height: 32px; font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Python for Data Science · PGE 5 · PSB</div>
+    <h1>Set up Python before Session 1</h1>
+    <p class="lede">About 30 minutes, most of it waiting for the download. Do it at home on a good connection, not in the classroom.</p>
+    <div class="summary">
+      <div><b>What you install</b><span>Anaconda: Python, Jupyter and every library we use</span></div>
+      <div><b>What you need</b><span>~5 GB free disk space, admin rights on your laptop</span></div>
+      <div><b>If it fails</b><span>Google Colab in your browser, with nothing to install</span></div>
+    </div>
+  </header>
+
+  <div class="os-bar" role="group" aria-label="Choose your computer">
+    <span class="label">My computer is a</span>
+    <div class="seg">
+      <button type="button" id="btn-win" data-choose="win" aria-pressed="false">Windows PC</button>
+      <button type="button" id="btn-mac" data-choose="mac" aria-pressed="false">Mac</button>
+    </div>
+  </div>
+
+  <section id="install">
+    <h2>1. Install Anaconda</h2>
+    <p class="section-intro">Anaconda bundles Python with Pandas, Matplotlib, Seaborn, SciPy, statsmodels and Jupyter, the tools for all four sessions.</p>
+    <ol class="steps">
+      <li><div class="step-body">
+        <h3>Download the installer</h3>
+        <p>Go to <a href="https://www.anaconda.com/download" target="_blank" rel="noopener">anaconda.com/download</a>. The site asks for an email address; you can use <em>Skip registration</em> below the form.</p>
+        <p data-os="win">Choose the <b>Windows 64-Bit Graphical Installer</b> (the <code>.exe</code> file).</p>
+        <div data-os="mac">
+          <p>Choose the <b>Graphical Installer</b> (the <code>.pkg</code> file) that matches your chip:</p>
+          <ul>
+            <li>Click the Apple menu (top left) →<b>About This Mac</b>.</li>
+            <li><b>Chip: Apple M1, M2, M3, M4…</b> → download the <b>Apple Silicon</b> version.</li>
+            <li><b>Processor: Intel…</b> → download the <b>Intel</b> version.</li>
+          </ul>
+        </div>
+      </div></li>
+
+      <li><div class="step-body">
+        <h3>Run the installer</h3>
+        <div data-os="win">
+          <p>Double-click the <code>.exe</code> file and accept the defaults, with two things to check:</p>
+          <ul>
+            <li>Install for <b>Just Me</b> (recommended).</li>
+            <li>Leave <b>“Add Anaconda to my PATH”</b> <b>unticked</b>. This is the default.</li>
+          </ul>
+          <div class="note"><b>Accents or spaces in your Windows user name?</b> (e.g. <code>C:\Users\Hélène Dupont</code>.) The installer may refuse the default location. Install to <code>C:\anaconda3</code> instead.</div>
+        </div>
+        <div data-os="mac">
+          <p>Double-click the <code>.pkg</code> file and follow the steps. Choose <b>Install for me only</b> and accept the defaults. Enter your Mac password when asked.</p>
+        </div>
+        <p>The installation takes 5–15 minutes. Wait until it says it has finished.</p>
+      </div></li>
+
+      <li><div class="step-body">
+        <h3>Open a terminal that knows about Anaconda</h3>
+        <div data-os="win">
+          <p>Open the Start menu and search for <b>Anaconda Prompt</b>. Use this, not the ordinary Command Prompt or PowerShell. The line should start with <code>(base)</code>.</p>
+        </div>
+        <div data-os="mac">
+          <p>Open <b>Terminal</b> (<kbd>⌘</kbd> + <kbd>Space</kbd>, type “Terminal”). If it was already open, close it and open a new one. The line should start with <code>(base)</code>.</p>
+        </div>
+        <p>Type this and press <kbd>Enter</kbd>:</p>
+        <div class="code"><pre><code>python --version</code></pre></div>
+        <div class="out">Python 3.13.5</div>
+        <p>Any version from 3.10 up is fine.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="course">
+    <h2>2. Set up the course folder</h2>
+    <p class="section-intro">Each session comes as a notebook plus the dataset. Keep them in one folder with this layout, because the notebooks look for the data at <code>data/raw/</code>.</p>
+    <ol class="steps">
+      <li><div class="step-body">
+        <h3>Create the folder and unzip the course pack</h3>
+        <p>Download the course pack from the course platform and unzip it to a place you can find, such as your <code>Documents</code> folder. You should get:</p>
+        <div class="folder">PGE5-Python/
+├── session1.ipynb
+└── data/
+    └── raw/
+        └── default of credit card clients.xls</div>
+        <div class="note" data-os="win"><b>Unzip first.</b> Windows lets you open files <em>inside</em> a zip without extracting them. Jupyter cannot see those files. Right-click the zip → <b>Extract All</b>.</div>
+        <div class="note" data-os="mac"><b>Avoid iCloud-synced folders</b> if “Desktop &amp; Documents” sync is on and your disk is nearly full: files may be offloaded and fail to open. A folder in your home directory is safest.</div>
+      </div></li>
+
+      <li><div class="step-body">
+        <h3>Start Jupyter from the course folder</h3>
+        <p>In the <span data-os="win">Anaconda Prompt</span><span data-os="mac">Terminal</span>, move into the folder, then start JupyterLab:</p>
+        <div class="code" data-os="win"><pre><code>cd %USERPROFILE%\Documents\PGE5-Python
+jupyter lab</code></pre></div>
+        <div class="code" data-os="mac"><pre><code>cd ~/Documents/PGE5-Python
+jupyter lab</code></pre></div>
+        <p>Your browser opens JupyterLab. Keep the terminal window open: closing it stops Jupyter.</p>
+        <p style="color:var(--ink-soft)">Prefer clicking? Open <b>Anaconda Navigator</b>, launch <b>JupyterLab</b>, and browse to the <code>PGE5-Python</code> folder in the left panel.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="test">
+    <h2>3. Check that everything works</h2>
+    <p class="section-intro">In JupyterLab, click <b>File → New → Notebook</b> (choose the Python 3 kernel), save it inside <code>PGE5-Python</code>, paste this into the first cell and press <kbd>Shift</kbd> + <kbd>Enter</kbd>.</p>
+    <div class="code"><pre><code>import pandas as pd, matplotlib, seaborn, scipy, statsmodels
+print("pandas", pd.__version__)
+
+df = pd.read_excel("data/raw/default of credit card clients.xls", header=1)
+print(df.shape)</code></pre></div>
+    <div class="out">pandas 2.2.3
+(30000, 25)</div>
+    <div class="note good"><b>You see <code>(30000, 25)</code>?</b> You are ready for Session 1. Version numbers may differ from the ones shown here.</div>
+    <p>If you get an error instead, find it below.</p>
+  </section>
+
+  <section id="problems">
+    <h2>If something goes wrong</h2>
+    <p class="section-intro">Read the <b>last line</b> of the error message first. It usually names the problem.</p>
+
+    <details>
+      <summary>ImportError: Missing optional dependency 'xlrd'</summary>
+      <div>
+        <p>The old <code>.xls</code> Excel format needs one extra package. Run this in a notebook cell, then restart the kernel (<b>Kernel → Restart Kernel</b>) and run your cell again:</p>
+        <div class="code"><pre><code>%pip install xlrd</code></pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>FileNotFoundError: No such file or directory</summary>
+      <div>
+        <p>Jupyter is running from a different folder than the one holding <code>data/</code>. Check where you are:</p>
+        <div class="code"><pre><code>import os
+print(os.getcwd())
+print(os.listdir())</code></pre></div>
+        <p>The list should include <code>data</code>. If it doesn't, save your notebook inside <code>PGE5-Python</code> (next to <code>session1.ipynb</code>), or restart Jupyter from that folder as in step 2.</p>
+      </div>
+    </details>
+
+    <details data-os="win">
+      <summary>'jupyter' or 'python' is not recognized as an internal or external command</summary>
+      <div>
+        <p>You are in the ordinary Command Prompt or PowerShell. Close it and open <b>Anaconda Prompt</b> from the Start menu.</p>
+      </div>
+    </details>
+
+    <details data-os="mac">
+      <summary>command not found: jupyter (or: conda)</summary>
+      <div>
+        <p>Close Terminal completely (<kbd>⌘</kbd> + <kbd>Q</kbd>) and open it again. If the line still does not start with <code>(base)</code>, run the command below, then reopen Terminal:</p>
+        <div class="code"><pre><code>~/anaconda3/bin/conda init zsh</code></pre></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>ModuleNotFoundError: No module named 'pandas' (or seaborn, statsmodels…)</summary>
+      <div>
+        <p>The notebook is using a Python other than Anaconda's. This happens most often in VS Code or PyCharm. For this course, start Jupyter from the <span data-os="win">Anaconda Prompt</span><span data-os="mac">Terminal</span> as in step 2. If you want to stay in your editor, run <code>%pip install pandas seaborn statsmodels xlrd</code> in a cell.</p>
+      </div>
+    </details>
+
+    <details data-os="mac">
+      <summary>“Anaconda can’t be opened” or the installer is blocked</summary>
+      <div>
+        <p>Open <b>System Settings → Privacy &amp; Security</b>, scroll down, and click <b>Open Anyway</b> next to the Anaconda message.</p>
+      </div>
+    </details>
+
+    <details data-os="win">
+      <summary>The installer stops, or complains about the install path</summary>
+      <div>
+        <p>Your user folder contains spaces or accented characters. Run the installer again and change the destination to <code>C:\anaconda3</code>. If your laptop is managed by an employer, you may lack admin rights; use Colab (below) and tell me before the session.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>My laptop is old, too full, or a Chromebook / tablet</summary>
+      <div><p>Use Google Colab (next section). It runs in the browser and gives the same results.</p></div>
+    </details>
+  </section>
+
+  <section id="colab">
+    <h2>Plan B: Google Colab</h2>
+    <p class="section-intro">Nothing to install, only a Google account. Use it if the installation fails or on the day your laptop misbehaves. Files you upload are deleted when the session ends, so download your notebook before closing the tab.</p>
+    <ol class="steps">
+      <li><div class="step-body">
+        <h3>Open the notebook</h3>
+        <p>Go to <a href="https://colab.research.google.com" target="_blank" rel="noopener">colab.research.google.com</a>, choose <b>File → Upload notebook</b> and select <code>session1.ipynb</code> from the course pack.</p>
+      </div></li>
+      <li><div class="step-body">
+        <h3>Recreate the data folder and upload the file</h3>
+        <p>Run this in the first cell:</p>
+        <div class="code"><pre><code>!mkdir -p data/raw
+%pip install -q xlrd</code></pre></div>
+        <p>Click the <b>folder icon</b> in the left sidebar. Open <code>data</code> → <code>raw</code>, hover over <code>raw</code>, click the <b>⋮</b> menu → <b>Upload</b>, and pick <code>default of credit card clients.xls</code>.</p>
+      </div></li>
+      <li><div class="step-body">
+        <h3>Run the check from section 3</h3>
+        <p>You should see <code>(30000, 25)</code>. The paths in the course notebooks now work unchanged.</p>
+        <p>Before you close the tab: <b>File → Download → Download .ipynb</b>.</p>
+      </div></li>
+    </ol>
+  </section>
+
+  <section id="ready">
+    <h2>Before Session 1</h2>
+    <p class="section-intro">Tick these off. Your ticks are saved in this browser only.</p>
+    <div class="check">
+      <label><input type="checkbox" id="c1"><span>Anaconda is installed, and <code>python --version</code> works in the <span data-os="win">Anaconda Prompt</span><span data-os="mac">Terminal</span></span></label>
+      <label><input type="checkbox" id="c2"><span>The course pack is unzipped, with <code>data/raw/</code> next to the notebook</span></label>
+      <label><input type="checkbox" id="c3"><span>The check cell prints <code>(30000, 25)</code></span></label>
+      <label><input type="checkbox" id="c4"><span>I know how to open Colab if my laptop fails on the day</span></label>
+    </div>
+    <div class="progress" id="progress" aria-live="polite">0 of 4 done</div>
+  </section>
+
+  <footer>
+    Still stuck after trying the fixes above? Email me a screenshot of the <b>full</b> error message and tell me your operating system, at least two days before Session 1.
+  </footer>
+</div>
+
+<script>
+(function () {
+  var store = {
+    get: function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  function setOS(os) {
+    document.body.classList.remove("os-mac", "os-win");
+    document.body.classList.add("os-" + os);
+    document.querySelectorAll("[data-choose]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.dataset.choose === os));
+    });
+    store.set("pge5-os", os);
+  }
+  var saved = store.get("pge5-os");
+  var guess = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent) ? "mac" : "win";
+  setOS(saved === "mac" || saved === "win" ? saved : guess);
+  document.querySelectorAll("[data-choose]").forEach(function (b) {
+    b.addEventListener("click", function () { setOS(b.dataset.choose); });
+  });
+
+  document.querySelectorAll(".code").forEach(function (block) {
+    var btn = document.createElement("button");
+    btn.type = "button"; btn.className = "copy"; btn.textContent = "Copy";
+    btn.addEventListener("click", function () {
+      var text = block.querySelector("code").innerText;
+      var done = function () { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1500); };
+      var fallback = function () {
+        var r = document.createRange(); r.selectNodeContents(block.querySelector("code"));
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = "Press Ctrl/⌘+C";
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+    });
+    block.appendChild(btn);
+  });
+
+  var boxes = document.querySelectorAll(".check input");
+  function update() {
+    var n = 0; boxes.forEach(function (b) { if (b.checked) n++; });
+    document.getElementById("progress").textContent =
+      n === boxes.length ? "All done. See you in Session 1." : n + " of " + boxes.length + " done";
+  }
+  boxes.forEach(function (b) {
+    b.checked = store.get("pge5-" + b.id) === "1";
+    b.addEventListener("change", function () { store.set("pge5-" + b.id, b.checked ? "1" : "0"); update(); });
+  });
+  update();
+})();
+</script>
